@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
 async function dbConnect(params) {
-  await mongoose.connect(
-    "mongodb+srv://kbavannarayana_db_user:Bobby123%40@cluster0.dc4yeg0.mongodb.net/shopsphere",
-  );
+  await mongoose.connect(process.env.MONGO_URI);
 }
 module.exports = dbConnect;

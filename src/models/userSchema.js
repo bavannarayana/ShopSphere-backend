@@ -1,18 +1,22 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
       lowercase: true,
+      required: true,
     },
     lastName: {
       type: String,
       lowercase: true,
+      required: true,
     },
     dateOfBirth: {
-      typeof: String,
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -28,12 +32,26 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
+      required: true,
     },
     phoneNumber: {
-      type: Number,
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isMobilePhone(value, "en-IN")) {
+          throw new Error("Enter valid phone number");
+        }
+      },
+    },
+    refreshToken: {
+      type: String,
     },
   },
   { timestamps: true },
 );
+
+userSchema.methods.comparePassword = async function (password) {
+  return bcrypt.compare(password, this.password);
+};
 
 module.exports = mongoose.model("User", userSchema);
